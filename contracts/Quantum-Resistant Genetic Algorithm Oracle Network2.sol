@@ -44,7 +44,7 @@ contract Project is Ownable, ReentrancyGuard {
     bytes32[] public dataKeys;
 
     uint256 public rewardPool;
-    uint256 public rewardThreshold = 150;
+
     uint256 public rewardAmount;
 
     bool public submissionsPaused = false;
