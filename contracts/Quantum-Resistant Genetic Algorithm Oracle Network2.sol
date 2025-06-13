@@ -10,7 +10,7 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 contract Project is Ownable, ReentrancyGuard {
     // Structures
     struct GeneticDataPoint {
-        bytes32 dataHash;
+        
         uint256 timestamp;
         uint256 confidence;
         address provider;
@@ -30,7 +30,11 @@ contract Project is Ownable, ReentrancyGuard {
         uint256 stakeAmount;
         bool isActive;
     }
-
+struct OracleProvider {
+        address providerAddress;
+        uint256 reputation;
+        uint256 stakeAmount;
+        bool isActive;
     // State variables
     mapping(bytes32 => GeneticDataPoint) public dataRegistry;
     mapping(bytes32 => DataVersion[]) public dataHistory;
