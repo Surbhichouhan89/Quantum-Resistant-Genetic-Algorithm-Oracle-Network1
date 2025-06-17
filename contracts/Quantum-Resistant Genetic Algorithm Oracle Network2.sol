@@ -18,8 +18,7 @@ contract Project is Ownable, ReentrancyGuard {
         bytes32 dataHash;
         uint256 timestamp;
         uint256 confidence;
-        bool isQuantumResistant;
-    }
+        bool isQuantumResistant
 
     struct OracleProvider {
         address providerAddress;
