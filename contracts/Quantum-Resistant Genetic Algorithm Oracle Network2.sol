@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 /**
- * @title Quantum-Resistant Genetic Algorifh
+ * @title Quantum-Resistant Genetic Algori
 contract Project is Ownable, ReentrancyGuard {
     // Structures
     struct GeneticDataPoint {
