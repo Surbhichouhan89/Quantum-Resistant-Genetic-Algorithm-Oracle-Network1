@@ -12,8 +12,7 @@ contract Project is Ownable, ReentrancyGuard {
         
         uint256 timestamp;
         uint256 confidence;
-        address provider;smmm
-
+        address provider
     struct DataVersion {
         bytes32 dataHash;
         uint256 timestamp;
