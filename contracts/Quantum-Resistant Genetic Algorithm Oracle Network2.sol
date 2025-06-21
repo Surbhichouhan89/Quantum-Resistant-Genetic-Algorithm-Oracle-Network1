@@ -23,11 +23,7 @@ contract Project is Ownable, ReentrancyGuard {
         uint256 stakeAmount;
         bool isActive;
     // State variables
-    mapping(bytes32 => GeneticDataPoint) public dataRegistry;
-    mapping(bytes32 => DataVersion[]) public dataHistory;
-    mapping(address => OracleProvider) public providers;
-    mapping(address => uint256) public lastActive;
-    mapping(address => bool) public blacklisted;
+   
 
     uint256 public minimumStake;
     uint256 public totalProviders;
