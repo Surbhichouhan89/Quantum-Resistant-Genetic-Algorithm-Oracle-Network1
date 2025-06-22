@@ -4,39 +4,44 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-/**
- * @title Quantum-Resistant Genetic Algori
 contract Project is Ownable, ReentrancyGuard {
-    // Structures
     struct GeneticDataPoint {
-        
+        bytes32 dataHash;
         uint256 timestamp;
         uint256 confidence;
-        address provider
+        address provider;
+        bool isQuantumResistant;
+    }
+
     struct DataVersion {
         bytes32 dataHash;
         uint256 timestamp;
         uint256 confidence;
-  
+        bool isQuantumResistant;
+    }
+
+    struct OracleProvider {
         address providerAddress;
         uint256 reputation;
         uint256 stakeAmount;
         bool isActive;
-    // State variables
-   
+    }
 
     uint256 public minimumStake;
     uint256 public totalProviders;
     uint256 public totalStaked;
     bytes32[] public dataKeys;
-
     uint256 public rewardPool;
-
     uint256 public rewardAmount;
-
+    uint256 public rewardThreshold;
     bool public submissionsPaused = false;
 
-    // Events
+    mapping(address => OracleProvider) public providers;
+    mapping(bytes32 => GeneticDataPoint) public dataRegistry;
+    mapping(bytes32 => DataVersion[]) public dataHistory;
+    mapping(address => uint256) public lastActive;
+    mapping(address => bool) public blacklisted;
+
     event DataSubmitted(bytes32 indexed dataKey, address indexed provider, uint256 timestamp);
     event ProviderRegistered(address indexed provider, uint256 stakeAmount);
     event ProviderDeregistered(address indexed provider);
@@ -52,7 +57,6 @@ contract Project is Ownable, ReentrancyGuard {
     event SubmissionsUnpaused();
     event ProviderToppedUp(address indexed provider, uint256 amount);
     event DataDeleted(bytes32 indexed dataKey);
-    event EmergencyWithdrawal(uint256 amount);
     event ProviderBlacklisted(address indexed provider);
     event ProviderUnblacklisted(address indexed provider);
 
@@ -79,12 +83,7 @@ contract Project is Ownable, ReentrancyGuard {
         emit ProviderRegistered(msg.sender, msg.value);
     }
 
-    function submitData(
-        bytes32 dataKey,
-        bytes32 dataHash,
-        uint256 confidence,
-        bool isQuantumResistant
-    ) external nonReentrant {
+    function submitData(bytes32 dataKey, bytes32 dataHash, uint256 confidence, bool isQuantumResistant) external nonReentrant {
         require(!submissionsPaused, "Submissions paused");
         require(providers[msg.sender].isActive, "Inactive provider");
         require(confidence <= 100, "Confidence must be 0-100");
@@ -111,12 +110,7 @@ contract Project is Ownable, ReentrancyGuard {
         }
     }
 
-    function updateData(
-        bytes32 dataKey,
-        bytes32 newDataHash,
-        uint256 newConfidence,
-        bool isQuantumResistant
-    ) external nonReentrant {
+    function updateData(bytes32 dataKey, bytes32 newDataHash, uint256 newConfidence, bool isQuantumResistant) external nonReentrant {
         require(providers[msg.sender].isActive, "Inactive provider");
         require(dataRegistry[dataKey].provider == msg.sender, "Not original provider");
         require(newConfidence <= 100, "Confidence must be 0-100");
@@ -169,7 +163,6 @@ contract Project is Ownable, ReentrancyGuard {
         emit ProviderToppedUp(msg.sender, msg.value);
     }
 
-    // View
     function getData(bytes32 dataKey) external view returns (GeneticDataPoint memory) {
         return dataRegistry[dataKey];
     }
@@ -186,7 +179,6 @@ contract Project is Ownable, ReentrancyGuard {
         return dataHistory[dataKey];
     }
 
-    // Admin
     function setMinimumStake(uint256 _minimumStake) external onlyOwner {
         minimumStake = _minimumStake;
     }
@@ -252,4 +244,10 @@ contract Project is Ownable, ReentrancyGuard {
             }
         }
 
-        emit DataDeleted
+        emit DataDeleted(dataKey);
+    }
+
+    function _dataKeyExists(bytes32 dataKey) internal view returns (bool) {
+        return dataRegistry[dataKey].timestamp != 0;
+    }
+}
